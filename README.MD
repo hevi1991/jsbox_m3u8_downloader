@@ -1,5 +1,7 @@
 # m3u8 downloader
 
+https://github.com/hevi1991/jsbox_m3u8_downloader
+
 通过解析粘贴板的m3u8链接地址进行下载ts段，然后合并成一个ts进行分享。喜欢的话，给颗星！（暂时不支持加密的ts文件下载）
 
 ## 安装
