@@ -4,7 +4,7 @@
 
 ## 安装
 
-[下载 m3u8 downloader](https://xteko.com/redir?name=Gallery&url=https://raw.githubusercontent.com/hevi1991/jsbox_m3u8_downloader/master/m3u8%20downloader.js)
+[下载 m3u8 downloader](https://xteko.com/redir?name=m3u8_downloader&url=https://raw.githubusercontent.com/hevi1991/jsbox_m3u8_downloader/master/m3u8%20downloader.js)
 
 ## 使用方法
 
