@@ -44,9 +44,9 @@ function downloadM3U8(url) {
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36"
         },
         handler: async function(resp) {
-            console.info(url);
+            $console.info(url);
             let data = resp.data;
-            console.info(data);
+            $console.info(data);
             if (data === "") {
                 $console.info("m3u8 下载失败");
                 $ui.alert({
