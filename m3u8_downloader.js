@@ -45,7 +45,7 @@ function downloadM3U8(url) {
         },
         handler: async function(resp) {
             let data = resp.data;
-            console.info(data);
+            $console.info(data);
             if (data === "") {
                 $console.info("m3u8 下载失败");
                 $ui.alert({
