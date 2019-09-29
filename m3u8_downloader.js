@@ -1,5 +1,5 @@
 $app.idleTimerDisabled = true;
-const url = $clipboard.text;
+let url = $clipboard.text;
 
 function isFullURL(checkURL) {
     let targetURL = checkURL + "";
@@ -44,7 +44,6 @@ function downloadM3U8(url) {
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36"
         },
         handler: async function(resp) {
-            console.info(url);
             let data = resp.data;
             console.info(data);
             if (data === "") {
@@ -124,14 +123,14 @@ function downloadM3U8(url) {
                         title: "下载",
                         handler: async function() {
                             if (tsList.length > 0) {
-                                $console.info("Start download TS files.");
-                                $console.info(tsList);
+                                $console.info(
+                                    `Start download ${tsList.length} TS files.`
+                                );
 
+                                let finish = 0;
                                 const downloadTS = url => {
-                                    return new Promise(function(
-                                        resolve,
-                                        reject
-                                    ) {
+                                    $console.info(`Start download ${url}`);
+                                    return new Promise(function(resolve) {
                                         $http.download({
                                             url: url,
                                             header: {
@@ -140,16 +139,25 @@ function downloadM3U8(url) {
                                             },
                                             showsProgress: false,
                                             handler: function(resp) {
-                                                let file = resp.data;
                                                 if (
                                                     +resp.response
                                                         .statusCode !== 200
                                                 ) {
-                                                    reject(
-                                                        resp.response.statusCode
+                                                    $console.info(
+                                                        `Retry download ${url}`
                                                     );
+                                                    downloadTS(url).then(
+                                                        data => {
+                                                            resolve(data);
+                                                        }
+                                                    );
+                                                } else {
+                                                    finish++;
+                                                    $ui.loading(
+                                                        `${finish} / ${tsList.length}`
+                                                    );
+                                                    resolve(resp.data);
                                                 }
-                                                resolve(file);
                                             }
                                         });
                                     });
@@ -162,28 +170,22 @@ function downloadM3U8(url) {
                                 if (!$file.exists("tmpl")) {
                                     $file.mkdir("tmpl");
                                 }
+
+                                $ui.loading(true);
+                                const files = await Promise.all(
+                                    tsList.map(tsURL => downloadTS(tsURL))
+                                );
+                                $ui.loading(false);
+
                                 let filesPath = [];
-                                for (let idx = 0; idx < tsList.length; idx++) {
-                                    let tsURL = tsList[idx];
-                                    try {
-                                        $ui.loading(
-                                            `${idx + 1}/${tsList.length}`
-                                        );
-                                        let tsFile = await downloadTS(tsURL);
-                                        const path = `tmpl/${idx + 1}.ts`;
-                                        $file.write({
-                                            data: tsFile,
-                                            path: path
-                                        });
-                                        $console.info(`${path} 保存成功`);
-                                        filesPath.push(path);
-                                        $ui.loading(false);
-                                    } catch (error) {
-                                        $console.error(
-                                            `${error} 下载失败 ${tsURL}`
-                                        );
-                                        idx--;
-                                    }
+                                for (const [idx, file] of files.entries()) {
+                                    const path = `tmpl/${idx + 1}.ts`;
+                                    $file.write({
+                                        data: file,
+                                        path: path
+                                    });
+                                    $console.info(`${path} 保存成功`);
+                                    filesPath.push(path);
                                 }
 
                                 if (filesPath.length !== tsList.length) {
@@ -215,4 +217,5 @@ function downloadM3U8(url) {
     });
 }
 
+// url = "http://1257120875.vod2.myqcloud.com/0ef121cdvodtransgzp1257120875/3055695e5285890780828799271/v.f230.m3u8";
 downloadM3U8(url);
