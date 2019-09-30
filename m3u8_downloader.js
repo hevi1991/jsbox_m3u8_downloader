@@ -1,5 +1,5 @@
 $app.idleTimerDisabled = true;
-let url = $clipboard.text;
+let url = $context.link || $clipboard.link;
 
 function isFullURL(checkURL) {
     let targetURL = checkURL + "";
@@ -45,7 +45,7 @@ function downloadM3U8(url) {
         },
         handler: async function(resp) {
             let data = resp.data;
-            $console.info(data);
+            console.info(data);
             if (data === "") {
                 $console.info("m3u8 下载失败");
                 $ui.alert({
@@ -137,6 +137,7 @@ function downloadM3U8(url) {
                                                 "USER-AGENT":
                                                     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36"
                                             },
+                                            timeout: 60000,
                                             showsProgress: false,
                                             handler: function(resp) {
                                                 if (
